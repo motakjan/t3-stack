@@ -12,8 +12,6 @@ import { api, type RouterOutputs } from "~/utils/api";
 const CreatePostWizard = () => {
   const { user } = useUser();
 
-  console.log(user);
-
   if (!user) return null;
 
   return (
