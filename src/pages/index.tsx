@@ -5,7 +5,8 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import { useState } from "react";
-import { LoadingPage } from "~/components/loading";
+import { toast } from "react-hot-toast";
+import { LoadingPage, LoadingSpinner } from "~/components/loading";
 
 dayjs.extend(relativeTime);
 
@@ -19,6 +20,9 @@ const CreatePostWizard = () => {
     onSuccess: () => {
       setInput("");
       void ctx.posts.getAll.invalidate();
+    },
+    onError: () => {
+      toast.error("Failed to post please try again later");
     },
   });
 
@@ -39,9 +43,22 @@ const CreatePostWizard = () => {
         className="grow bg-transparent outline-none"
         value={input}
         onChange={(e) => setInput(e.target.value)}
+        onKeyDown={(e) => {
+          e.preventDefault();
+          if (input !== "") mutate({ content: input });
+        }}
         disabled={isPosting}
       />
-      <button onClick={() => mutate({ content: input })}>SEND</button>
+      {input !== "" && !isPosting && (
+        <button onClick={() => mutate({ content: input })} disabled={isPosting}>
+          SEND
+        </button>
+      )}
+      {isPosting && (
+        <div className="flex items-center justify-center">
+          <LoadingSpinner size={20} />
+        </div>
+      )}
     </div>
   );
 };
